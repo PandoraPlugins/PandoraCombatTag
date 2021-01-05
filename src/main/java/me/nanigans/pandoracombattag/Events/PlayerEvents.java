@@ -1,7 +1,6 @@
 package me.nanigans.pandoracombattag.Events;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.FPlayers;
+import com.massivecraft.factions.*;
 import com.massivecraft.factions.struct.Relation;
 import me.nanigans.pandoracombattag.CombatTag.Combat;
 import org.bukkit.entity.Entity;
@@ -10,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Timer;
 
 public class PlayerEvents implements Listener {
 
@@ -38,7 +39,18 @@ public class PlayerEvents implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
-        
+
+        FPlayer player = FPlayers.getInstance().getByPlayer(event.getPlayer());
+        Faction board = Board.getInstance().getFactionAt(new FLocation(player.getPlayer().getLocation()));
+        if(board.getRelationTo(player).isEnemy() || board.isWarZone()){
+
+            Timer t = new Timer();
+            final LogOutTimer timer = new LogOutTimer(player.getPlayer());
+            t.schedule(timer, 100);
+            System.out.println(1);
+
+        }
+
     }
 
 }

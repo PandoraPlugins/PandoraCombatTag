@@ -1,6 +1,7 @@
 package me.nanigans.pandoracombattag;
 
 import me.nanigans.pandoracombattag.Commands.Tag;
+import me.nanigans.pandoracombattag.Events.PlayerEvents;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PandoraCombatTag extends JavaPlugin {
@@ -9,6 +10,7 @@ public final class PandoraCombatTag extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         getCommand("tag").setExecutor(new Tag());
+        getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
 
     }
 
