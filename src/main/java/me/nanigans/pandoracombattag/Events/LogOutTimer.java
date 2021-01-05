@@ -5,6 +5,7 @@ import net.minecraft.server.v1_8_R3.NBTCompressedStreamTools;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import net.minecraft.server.v1_8_R3.NBTTagDouble;
 import net.minecraft.server.v1_8_R3.NBTTagList;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -26,6 +27,10 @@ public class LogOutTimer extends TimerTask {
 
     @Override
     public void run() {
+        updateOfflineLoc();
+    }
+
+    public void updateOfflineLoc(){
 
         File playerFile = new File(plugin.getServer().getWorldContainer().getAbsolutePath().replace(".", "")
                 + player.getWorld().getName() + File.separator
@@ -34,15 +39,21 @@ public class LogOutTimer extends TimerTask {
         NBTTagCompound nbt = null;
         try {
             nbt = NBTCompressedStreamTools.a(new FileInputStream(playerFile));
-            System.out.println("nbt = " + nbt);
         } catch (IOException e) {
             e.printStackTrace();
         }
         if(nbt != null) {
             NBTTagList newLoc = new NBTTagList();
-            newLoc.add(new NBTTagDouble(490));
-            newLoc.add(new NBTTagDouble(150));
-            newLoc.add(new NBTTagDouble(145));
+            if(true) {
+                newLoc.add(new NBTTagDouble(490));
+                newLoc.add(new NBTTagDouble(150));
+                newLoc.add(new NBTTagDouble(145));
+            }else{
+                final Location sLoc = player.getWorld().getSpawnLocation();
+                newLoc.add(new NBTTagDouble(sLoc.getX()));
+                newLoc.add(new NBTTagDouble(sLoc.getY()));
+                newLoc.add(new NBTTagDouble(sLoc.getZ()));
+            }
             nbt.set("Pos", newLoc);
             try {
                 NBTCompressedStreamTools.a(nbt, new FileOutputStream(playerFile.getAbsolutePath()));
@@ -50,7 +61,6 @@ public class LogOutTimer extends TimerTask {
                 e.printStackTrace();
             }
         }
-
 
     }
 

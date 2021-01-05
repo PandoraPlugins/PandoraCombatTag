@@ -2,5 +2,11 @@
   "CombatTag": {
     "message": "You are currently in combat!",
     "duration": 30
+  },
+  "_comment": "Leave spawnLocation: null if you want it to default to the world spawn",
+  "spawnLocation": {
+    "x": 50,
+    "y": 68,
+    "z": 60
   }
 }
