@@ -1,0 +1,9 @@
+name: PandoraCombatTag
+version: ${project.version}
+main: me.nanigans.pandoracombattag.PandoraCombatTag
+authors: [ProNaniagns]
+description: A combat tag plugin for pandorapvp
+commands:
+  tag:
+    usage: /tag <player>
+    description: combat tag a aplayer

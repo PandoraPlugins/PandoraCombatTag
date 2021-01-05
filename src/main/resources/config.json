@@ -1,0 +1,6 @@
+{
+  "CombatTag": {
+    "message": "You are currently in combat!",
+    "duration": 30
+  }
+}
