@@ -1,12 +1,16 @@
 {
+  "_comment1": "CombatTag duration is in seconds, offlineDuration in milliseconds",
   "CombatTag": {
     "message": "You are currently in combat!",
-    "duration": 30
+    "duration": 30,
+    "disabledCommands": ["home", "echest"],
+    "cannotPerformAction": "You cannot perform this action as you are in combat"
   },
   "_comment": "Leave spawnLocation: null if you want it to default to the world spawn",
   "spawnLocation": {
-    "x": 50,
-    "y": 68,
-    "z": 60
-  }
+    "x": 50.0,
+    "y": 68.0,
+    "z": 60.0
+  },
+  "offlineDuration": 3600000
 }

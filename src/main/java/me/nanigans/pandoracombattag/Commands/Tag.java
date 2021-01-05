@@ -19,9 +19,8 @@ public class Tag implements CommandExecutor {
                 Player player = Bukkit.getPlayerExact(args[0]);
                 if(player != null){
 
-                    sender.sendMessage(ChatColor.GREEN+"Player tagged!");
-
                     new Combat(player).startCounting();
+                    sender.sendMessage(ChatColor.GREEN+"Player tagged!");
 
                     return true;
 

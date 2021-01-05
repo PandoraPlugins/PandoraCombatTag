@@ -1,6 +1,9 @@
 package me.nanigans.pandoracombattag.CombatTag;
 
+import com.google.gson.JsonArray;
+import me.nanigans.pandoracombattag.JsonUtil;
 import me.nanigans.pandoracombattag.PandoraCombatTag;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -14,8 +17,11 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.Plugin;
+import org.json.simple.JSONArray;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -92,10 +98,25 @@ public class Combat implements Listener {
 
         if(event.getPlayer().getUniqueId().equals(this.player.getUniqueId())){
 
-            if (event.getMessage().contains("echest")) {
-                event.setCancelled(true);
-                event.getPlayer().sendMessage(ChatColor.RED+"You cannot use this command in combat for another: "
-                        +timer.getLevel()+" seconds");
+            JSONArray commands = (JSONArray) JsonUtil.getData("CombatTag.disabledCommands");
+
+            String commandName = event.getMessage().split(" ")[0].substring(1);
+            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                for (Object command : commands) {
+                    final Map<String, Map<String, Object>> commandsList = plugin.getDescription().getCommands();
+                    if(commandsList.containsKey(command.toString()) && command.toString().equalsIgnoreCase(commandName)){
+                        return;
+                    }
+
+                        commandsList.forEach((i, j) -> {
+                            final Object aliases = j.get("aliases");
+                            if(aliases != null && ((List<String>) aliases).size() > 0){
+                                return;
+                            }
+                        });
+
+                    }
+                }
             }
 
         }

@@ -3,6 +3,7 @@ package me.nanigans.pandoracombattag.Events;
 import com.massivecraft.factions.*;
 import com.massivecraft.factions.struct.Relation;
 import me.nanigans.pandoracombattag.CombatTag.Combat;
+import me.nanigans.pandoracombattag.JsonUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,8 +47,7 @@ public class PlayerEvents implements Listener {
 
             Timer t = new Timer();
             final LogOutTimer timer = new LogOutTimer(player.getPlayer());
-            t.schedule(timer, 100);
-            System.out.println(1);
+            t.schedule(timer, Long.parseLong(JsonUtil.getData("offlineDuration").toString()));
 
         }
 

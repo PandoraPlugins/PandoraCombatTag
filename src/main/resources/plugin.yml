@@ -7,3 +7,7 @@ commands:
   tag:
     usage: /tag <player>
     description: combat tag a aplayer
+permissions:
+  Combat.Tag:
+    description: Allows the player to use the tag command
+    default: op

@@ -1,5 +1,6 @@
 package me.nanigans.pandoracombattag.Events;
 
+import me.nanigans.pandoracombattag.JsonUtil;
 import me.nanigans.pandoracombattag.PandoraCombatTag;
 import net.minecraft.server.v1_8_R3.NBTCompressedStreamTools;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -44,10 +45,12 @@ public class LogOutTimer extends TimerTask {
         }
         if(nbt != null) {
             NBTTagList newLoc = new NBTTagList();
-            if(true) {
-                newLoc.add(new NBTTagDouble(490));
-                newLoc.add(new NBTTagDouble(150));
-                newLoc.add(new NBTTagDouble(145));
+            final Object spawnLocation = JsonUtil.getData("spawnLocation");
+            if(spawnLocation != null) {
+                Map<String, Object> loc = (Map<String, Object>) spawnLocation;
+                newLoc.add(new NBTTagDouble(Double.parseDouble(loc.get("x").toString())));
+                newLoc.add(new NBTTagDouble(Double.parseDouble(loc.get("y").toString())));
+                newLoc.add(new NBTTagDouble(Double.parseDouble(loc.get("z").toString())));
             }else{
                 final Location sLoc = player.getWorld().getSpawnLocation();
                 newLoc.add(new NBTTagDouble(sLoc.getX()));
