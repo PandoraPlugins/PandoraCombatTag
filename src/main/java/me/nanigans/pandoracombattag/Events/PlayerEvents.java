@@ -6,6 +6,7 @@ import me.nanigans.pandoracombattag.CombatTag.Combat;
 import me.nanigans.pandoracombattag.JsonUtil;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -19,7 +20,10 @@ public class PlayerEvents implements Listener {
     public void playerHitPlayer(EntityDamageByEntityEvent event){
 
         final Entity entity = event.getEntity();
-        final Entity damager = event.getDamager();
+        Entity damager = event.getDamager();
+        if(damager instanceof Projectile){
+            damager = (Entity) ((Projectile) damager).getShooter();
+        }
         if(damager instanceof Player && entity instanceof Player){
             final  Player player = ((Player) entity);
             final Player damager1 = (Player) damager;

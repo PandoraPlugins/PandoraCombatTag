@@ -59,6 +59,7 @@ public class Combat implements Listener {
         player.setExp(this.pXp);
         player.setLevel(this.level);
         tagged.remove(player.getUniqueId());
+        combatTimer.cancel();
         HandlerList.unregisterAll(this);
     }
 
