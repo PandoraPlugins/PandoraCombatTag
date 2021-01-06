@@ -15,23 +15,26 @@ public class Tag implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if(command.getName().equals("tag")){
-            if(args.length > 0) {
-                Player player = Bukkit.getPlayerExact(args[0]);
-                if(player != null){
+            if(sender.hasPermission("Combat.Tag")) {
+                if (args.length > 0) {
+                    Player player = Bukkit.getPlayerExact(args[0]);
+                    if (player != null) {
 
-                    new Combat(player).startCounting();
-                    sender.sendMessage(ChatColor.GREEN+"Player tagged!");
+                        new Combat(player).startCounting();
+                        sender.sendMessage(ChatColor.GREEN + "Player tagged!");
 
+                        return true;
+
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Invalid player");
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please specify a player");
                     return true;
-
-                }else{
-                    sender.sendMessage(ChatColor.RED+"Invalid player");
                 }
             }else{
-                sender.sendMessage(ChatColor.RED+"Please specify a player");
-                return true;
+                sender.sendMessage(ChatColor.RED+"Invalid permissions");
             }
-
         }
 
         return false;
