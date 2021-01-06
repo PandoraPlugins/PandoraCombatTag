@@ -1,7 +1,5 @@
 package me.nanigans.pandoracombattag;
 
-import com.google.gson.Gson;
-import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -9,7 +7,6 @@ import org.json.simple.parser.ParseException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 
 public class JsonUtil {
 

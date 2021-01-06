@@ -1,6 +1,5 @@
 package me.nanigans.pandoracombattag.CombatTag;
 
-import com.google.gson.JsonArray;
 import me.nanigans.pandoracombattag.JsonUtil;
 import me.nanigans.pandoracombattag.PandoraCombatTag;
 import org.bukkit.Bukkit;
@@ -11,13 +10,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.json.simple.JSONArray;
 
 import java.util.HashMap;
@@ -31,8 +33,10 @@ public class Combat implements Listener {
     private final Player player;
     private static final PandoraCombatTag plugin = PandoraCombatTag.getPlugin(PandoraCombatTag.class);
     private final int level;
-    private CombatTimer timer;
+    private final CombatTimer timer;
     private final float pXp;
+    private float xp = 1;
+    private int pLevel = (int) CombatTimer.getDuration();
     private final CombatTimer combatTimer;
 
     public Combat(Player player){
@@ -48,12 +52,14 @@ public class Combat implements Listener {
     public void startCounting(){
         player.setLevel(30);
         player.setExp(1F);
-        combatTimer.run();
+        combatTimer.runTaskTimerAsynchronously(plugin, 0, 0);
     }
 
     public void endCombat(){
         player.setExp(this.pXp);
         player.setLevel(this.level);
+        tagged.remove(player.getUniqueId());
+        HandlerList.unregisterAll(this);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -83,6 +89,14 @@ public class Combat implements Listener {
     }
 
     @EventHandler
+    public void onDeath(PlayerDeathEvent event){
+        if(event.getEntity().getUniqueId().equals(this.player.getUniqueId())){
+            combatTimer.cancel();
+            HandlerList.unregisterAll(this);
+        }
+    }
+
+    @EventHandler
     public void onBowBoost(EntityDamageByEntityEvent event){
 
         if (event.getDamager() instanceof Arrow) {
@@ -96,39 +110,68 @@ public class Combat implements Listener {
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event){
 
-        if(event.getPlayer().getUniqueId().equals(this.player.getUniqueId())){
+        if(event.getPlayer().getUniqueId().equals(this.player.getUniqueId())) {
 
-            JSONArray commands = (JSONArray) JsonUtil.getData("CombatTag.disabledCommands");
+            JSONArray commandsDisabled = (JSONArray) JsonUtil.getData("CombatTag.disabledCommands");
 
-            String commandName = event.getMessage().split(" ")[0].substring(1);
-            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
-                for (Object command : commands) {
-                    final Map<String, Map<String, Object>> commandsList = plugin.getDescription().getCommands();
-                    if(commandsList.containsKey(command.toString()) && command.toString().equalsIgnoreCase(commandName)){
-                        return;
-                    }
+            if (commandsDisabled != null) {
+                String commandName = event.getMessage().split(" ")[0].substring(1);
+                if(commandName.contains(":")) commandName = commandName.split(":")[1];
 
-                        commandsList.forEach((i, j) -> {
-                            final Object aliases = j.get("aliases");
-                            if(aliases != null && ((List<String>) aliases).size() > 0){
+                final Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
+                for (Plugin plugin : plugins) {
+                    final PluginDescriptionFile description = plugin.getDescription();
+                    final Map<String, Map<String, Object>> commands = description.getCommands();
+                    if(commands != null) {
+                        for (Map.Entry<String, Map<String, Object>> cmdEntry : commands.entrySet()) {
+
+                            final String s = ChatColor.translateAlternateColorCodes('&',
+                                    JsonUtil.getData("CombatTag.cannotPerformAction").toString());
+                            if (commandsDisabled.contains(cmdEntry.getKey()) && cmdEntry.getKey().equalsIgnoreCase(commandName)) {//check actual cmd name
+                                event.setCancelled(true);
+                                player.sendMessage(s);
                                 return;
                             }
-                        });
+                            final List<String> aliases = (List<String>) cmdEntry.getValue().get("aliases");
+                            if(aliases != null) {//check aliase names
+                                String finalCommandName = commandName.toLowerCase();
+                                if (aliases.stream().map(String::toLowerCase).anyMatch(i -> i.equalsIgnoreCase(finalCommandName)) &&
+                                        commandsDisabled.contains(cmdEntry.getKey())) {
+                                    event.setCancelled(true);
+                                    player.sendMessage(s);
+                                    return;
+                                }
+                            }
 
+                        }
                     }
                 }
+
             }
 
         }
 
     }
 
-    public CombatTimer getTimer() {
-        return timer;
+
+    public void setXp(float xp) {
+        this.xp = xp;
     }
 
-    public static PandoraCombatTag getPlugin() {
-        return plugin;
+    public void setpLevel(int pLevel) {
+        this.pLevel = pLevel;
+    }
+
+    public float getXp() {
+        return xp;
+    }
+
+    public int getpLevel() {
+        return pLevel;
+    }
+
+    public CombatTimer getTimer() {
+        return timer;
     }
 
     public Player getPlayer() {

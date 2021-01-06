@@ -3,7 +3,8 @@
   "CombatTag": {
     "message": "You are currently in combat!",
     "duration": 30,
-    "disabledCommands": ["home", "echest"],
+    "_comment": "these commands must be the actual command name given by their plugin and not aliases",
+    "disabledCommands": ["home", "enderchest"],
     "cannotPerformAction": "You cannot perform this action as you are in combat"
   },
   "_comment": "Leave spawnLocation: null if you want it to default to the world spawn",
