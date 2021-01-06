@@ -46,7 +46,6 @@ public final class PandoraCombatTag extends JavaPlugin {
     public void onDisable() {
         LogOutTimer.timers.forEach((i, j) -> j.updateOfflineLoc());
         Combat.tagged.forEach((i, j) -> {
-            j.getTimer().cancel();
             j.endCombat();
         });
     }
