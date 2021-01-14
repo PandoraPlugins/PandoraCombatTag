@@ -69,29 +69,42 @@ public class Combat implements Listener {
         final Player player = event.getPlayer();
         if(player.getUniqueId().equals(this.player.getUniqueId())){
             player.setHealth(0);
-            final PlayerInventory inventory = player.getInventory();
-            for (ItemStack itemStack : inventory) {
-                if(itemStack != null && itemStack.getType() != Material.AIR) {
-                    player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
-                    inventory.removeItem(itemStack);
-                }
-            }
-            for (ItemStack armorContent : inventory.getArmorContents()) {
-                if(armorContent != null && armorContent.getType() != Material.AIR){
-                    player.getWorld().dropItemNaturally(player.getLocation(), armorContent);
-                }
-            }
-            inventory.setHelmet(null);
-            inventory.setChestplate(null);
-            inventory.setLeggings(null);
-            inventory.setBoots(null);
+            dropEverything();
         }
+
+    }
+
+
+    /**
+     * Drops everything the player has, stops the timer and sets their xp to 0
+     */
+    private void dropEverything(){
+
+        final PlayerInventory inventory = player.getInventory();
+        for (ItemStack itemStack : inventory) {
+            if(itemStack != null && itemStack.getType() != Material.AIR) {
+                player.getWorld().dropItemNaturally(player.getLocation(), itemStack);
+                inventory.removeItem(itemStack);
+            }
+        }
+        for (ItemStack armorContent : inventory.getArmorContents()) {
+            if(armorContent != null && armorContent.getType() != Material.AIR){
+                player.getWorld().dropItemNaturally(player.getLocation(), armorContent);
+            }
+        }
+        inventory.setHelmet(null);
+        inventory.setChestplate(null);
+        inventory.setLeggings(null);
+        inventory.setBoots(null);
+        player.setLevel(0);
+        player.setExp(0);
 
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event){
         if(event.getEntity().getUniqueId().equals(this.player.getUniqueId())){
+            if(player.isOp()) dropEverything();
             combatTimer.cancel();
             HandlerList.unregisterAll(this);
         }
